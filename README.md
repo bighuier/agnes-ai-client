@@ -14,15 +14,9 @@
 ## 系统要求
 
 - Python 3.8+
-- 已安装以下 Python 标准库：
+- 已安装依赖：
   - flask
-  - json
-  - os
-  - sqlite3
-  - uuid
-  - urllib
-  - datetime
-  - re
+  - cryptography
 
 ## 快速开始
 
@@ -35,6 +29,7 @@
 ### 方法二：命令行启动
 
 ```bash
+pip install -r requirements.txt
 python app/server.py
 ```
 
@@ -47,17 +42,18 @@ python app/server.py
 ## 文件结构
 
 ```
-agnes-ai-frontend/
+agnes-ai-client/
 ├── app/
 │   ├── server.py      # 主服务程序
 │   └── diagnose.py    # 诊断工具
-├── data/
+├── data/              # 数据目录（运行后自动创建）
 │   ├── config.json    # 配置文件（API Key）
 │   └── prompts.db     # 提示词数据库
 ├── static/js/         # 前端增强脚本
 ├── templates/         # HTML模板
 ├── generated-images/  # 生成的图片存储
 ├── start.bat          # Windows启动脚本
+├── requirements.txt   # Python依赖
 └── README.md          # 说明文档
 ```
 

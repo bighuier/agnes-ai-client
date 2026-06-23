@@ -1,48 +1,28 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
 *.egg-info/
 dist/
 build/
 *.egg
 
-# Data files (contain user data and API keys)
-data/*.json
-data/*.db
-data/.key
-data/prompts.db
-data/config.json
-
-# Generated images
-generated-images/
-*.png
-*.jpg
-*.jpeg
-*.webp
-*.mp4
-
-# Build outputs
-dist/
-build/
-*.exe
-*.spec
-
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# 本地数据（包含API Key和密钥）
+data/
+generated-images/
+
+# macOS
 .DS_Store
+
+# Windows
 Thumbs.db
 
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.bak
+# 测试文件
+test-*.py
+*.test.js

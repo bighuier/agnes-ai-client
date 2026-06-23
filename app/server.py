@@ -110,7 +110,7 @@ def cors(r):
 @app.route("/")
 def idx():
     h=open(os.path.join(BASE,"templates","index.html"),encoding="utf-8").read()
-    v="?v=20260618d"
+    v="?v=20260622"
     h=h.replace("</body></html>","<script src=/static/js/enhance.js"+v+"></script><script src=/static/js/enhance2.js"+v+"></script><script src=/static/js/enhance4.js"+v+"></script><script src=/static/js/enhance5.js"+v+"></script><script src=/static/js/enhance6.js"+v+"></script><script src=/static/js/enhance7.js"+v+"></script><script src=/static/js/enhance8.js"+v+"></script><script src=/static/js/enhance9.js"+v+"></script></body></html>")
     return h
 @app.route("/api/config", methods=["GET","POST","DELETE"])
@@ -149,6 +149,41 @@ def enhance():
     if isinstance(r,dict)and r.get("error"): return jsonify({"enhanced":text})
     try: return jsonify({"enhanced":r["choices"][0]["message"]["content"].strip()})
     except: return jsonify({"enhanced":text})
+
+@app.route("/api/prompts/reverse", methods=["POST"])
+def reverse_prompt():
+    image_data = request.json.get("image","")
+    if not image_data: return jsonify({"error":"请先上传图片"}),400
+    
+    sys_msg="你是专业AI提示词工程师。分析图片并生成详细的专业提示词，直接输出可用于AI图像生成的提示词，不要包含额外解释。输出以英文为主，包含摄影参数、光线、构图、风格等要素。"
+    user_msg="分析这张图片并生成专业的AI图像生成提示词："
+    
+    try:
+        r,c = proxy(AGNES+"/v1/chat/completions",{"model":"agnes-2.0-flash","messages":[
+            {"role":"system","content":sys_msg},
+            {"role":"user","content":[
+                {"type":"text","text":user_msg},
+                {"type":"image_url","image_url":{"url":image_data}}
+            ]}
+        ]},"POST")
+        
+        if isinstance(r, dict):
+            if r.get("error"): 
+                return jsonify({"error":str(r.get("error"))}),400
+            elif "choices" in r:
+                try: 
+                    prompt = r["choices"][0]["message"]["content"].strip()
+                    prompt = prompt.replace('```', '').strip()
+                    return jsonify({"prompt":prompt})
+                except Exception as e:
+                    return jsonify({"error":"解析失败: "+str(e)}),500
+            else:
+                return jsonify({"error":"未知响应格式"}),500
+        else:
+            return jsonify({"error":"API返回格式错误"}),500
+            
+    except Exception as e:
+        return jsonify({"error":"请求失败: "+str(e)}),500
 @app.route("/api/prompts/analyze_simple", methods=["POST"])
 def analyze_simple():
     text = request.json.get("text","")
